@@ -1,0 +1,58 @@
+# Core web framework
+fastapi==0.115.0
+uvicorn==0.24.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+PyJWT==2.10.1
+python-multipart==0.0.6
+
+# Environment management
+python-dotenv==1.0.0
+
+# LangChain core components
+langchain-core==1.2.6
+langchain-community==0.4.1
+langchain-text-splitters==1.0.0
+
+# LangChain integrations
+langchain-openai==1.1.7
+langchain-huggingface==1.2.0
+langchain-chroma==1.1.0
+langchain-google-genai==4.2.1
+
+# Vector database
+chromadb==1.4.0
+
+# Document processing
+pypdf==6.2.0
+docx2txt==0.9
+
+# Machine learning and embeddings
+sentence-transformers==4.0.1
+torch==2.6.0
+transformers==4.57.1
+huggingface-hub==0.36.0
+
+# Additional utilities
+numpy==1.26.4
+pandas==2.3.2
+requests==2.32.5
+Pillow==10.0.0
+
+# Optional: For better performance
+accelerate==1.8.1
+
+# BM25 for retrieval
+rank-bm25==0.2.2
+
+safetensors==0.4.5
+datasets==3.1.0
+ragas
+
+# Google Generative AI
+google-genai
+
+# LangSmith for tracing and evaluation
+langsmith
+

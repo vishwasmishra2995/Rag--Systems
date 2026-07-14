@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multilingual RAG — AI-Powered Document Intelligence</title>
+  <meta name="description" content="Upload your documents and ask questions powered by Retrieval-Augmented Generation. Evaluate response quality with RAGAS metrics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="screen active">
+    <div class="auth-card glass">
+      <div class="auth-logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="url(#g1)" stroke-width="2"/><path d="M12 20h16M20 12v16" stroke="url(#g1)" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="g1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#c084fc"/></defs></svg>
+        </div>
+        <span class="logo-text">Multilingual RAG</span>
+      </div>
+      <h1 class="auth-title">Document Intelligence</h1>
+      <p class="auth-subtitle">Upload, ask, and evaluate with AI-powered retrieval</p>
+
+      <div class="input-group">
+        <label for="username-input">Username</label>
+        <input id="username-input" type="text" placeholder="Enter your username" autocomplete="off" />
+      </div>
+
+      <button id="login-btn" class="btn btn-primary btn-full" onclick="handleLogin()">
+        <span class="btn-text">Continue</span>
+        <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+      </button>
+
+      <div id="auth-error" class="error-msg hidden"></div>
+
+
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app-screen" class="screen">
+
+    <!-- Sidebar -->
+    <aside class="sidebar glass">
+      <div class="sidebar-header">
+        <div class="logo-icon small">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="url(#g2)" stroke-width="2"/><path d="M12 20h16M20 12v16" stroke="url(#g2)" stroke-width="2" stroke-linecap="round"/><defs><linearGradient id="g2" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#c084fc"/></defs></svg>
+        </div>
+        <span class="logo-text">Multilingual RAG</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="nav-chat" onclick="switchTab('chat')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Chat</span>
+        </button>
+
+        <button class="nav-item" id="nav-eval" onclick="switchTab('eval')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Evaluate</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar" id="user-avatar">R</div>
+          <span id="user-name-display">User</span>
+        </div>
+        <button class="btn-icon-only" onclick="handleLogout()" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content">
+
+      <!-- CHAT TAB -->
+      <div id="tab-chat" class="tab-panel active">
+        <div class="panel-header">
+          <h2>Chat with your Documents</h2>
+          <p>Ask anything — answers are grounded in your uploaded files</p>
+        </div>
+
+        <div class="chat-container" id="chat-messages">
+          <div class="chat-welcome">
+            <div class="welcome-icon">✦</div>
+            <p>Upload a document first, then ask questions about it.</p>
+          </div>
+        </div>
+
+        <div class="chat-input-row">
+          <div id="chat-upload-toast" class="chat-upload-toast hidden"></div>
+          <div class="chat-input-wrap glass">
+            <button class="btn-attach" id="attach-btn" onclick="document.getElementById('chat-file-input').click()" title="Attach document">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+            </button>
+            <input id="chat-file-input" type="file" accept=".pdf,.csv,.docx,.txt" style="display:none" onchange="handleInlineUpload(event)" />
+            <input id="question-input" type="text" placeholder="Ask a question or attach a document…" onkeydown="if(event.key==='Enter') sendQuestion()" />
+            <button id="send-btn" class="btn btn-primary btn-send" onclick="sendQuestion()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- EVAL TAB -->
+      <div id="tab-eval" class="tab-panel">
+        <div class="panel-header">
+          <h2>RAGAS Evaluation</h2>
+          <p>Measure your RAG pipeline quality with faithfulness, relevancy and precision</p>
+        </div>
+
+        <div class="eval-trigger glass">
+          <div class="eval-trigger-info">
+            <h3>Run Evaluation</h3>
+            <p>Evaluates all stored interactions using Gemini as judge. Requires at least one RAG interaction.</p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <button class="btn-icon-only" id="clear-history-btn" onclick="clearEvalHistory()" title="Clear history">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+            <button class="btn btn-primary" id="eval-btn" onclick="runEvaluation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Run Now
+            </button>
+          </div>
+        </div>
+
+        <div id="eval-loading" class="eval-loading hidden">
+          <div class="pulse-ring"></div>
+          <p>Running RAGAS evaluation… this may take a minute</p>
+        </div>
+
+        <!-- History of all past runs, newest on top -->
+        <div id="eval-history" class="eval-history"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
